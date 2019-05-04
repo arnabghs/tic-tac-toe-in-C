@@ -2,17 +2,16 @@
 #include <stdlib.h>
 
 void displayBoard(char[]);
-int getSymbol();
+int getPosition();
 void updateBoard(int, char[]);
+void turnManager(char[]);
 
 int main()
 {
 	char boardPositions[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-	displayBoard(boardPositions);
-	int index = getSymbol();
-	updateBoard(index, boardPositions);
 
-	displayBoard(boardPositions);
+	turnManager(boardPositions);
+
 	return 0;
 }
 
@@ -36,7 +35,7 @@ void displayBoard(char boardPositions[])
 	printf("\n");
 }
 
-int getSymbol()
+int getPosition()
 {
 	int index;
 	printf("Enter No. of Position: \n");
@@ -47,4 +46,19 @@ int getSymbol()
 void updateBoard(int index, char boardPositions[])
 {
 	boardPositions[index] = 'X';
+}
+
+void turnManager(char boardPositions[])
+{
+	displayBoard(boardPositions);
+
+	int turnPlayed = 0;
+
+	while (turnPlayed < 9)
+	{
+		int index = getPosition();
+		updateBoard(index, boardPositions);
+		displayBoard(boardPositions);
+		turnPlayed++;
+	}
 }
