@@ -2,15 +2,21 @@
 #include <stdlib.h>
 
 void displayBoard(char[]);
+int getSymbol();
+void updateBoard(int, char[]);
 
 int main()
 {
-	char boardPosition[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-	displayBoard(boardPosition);
+	char boardPositions[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+	displayBoard(boardPositions);
+	int index = getSymbol();
+	updateBoard(index, boardPositions);
+
+	displayBoard(boardPositions);
 	return 0;
 }
 
-void displayBoard(char boardPosition[])
+void displayBoard(char boardPositions[])
 {
 
 	printf("\n");
@@ -22,10 +28,23 @@ void displayBoard(char boardPosition[])
 	printf("\n");
 
 	printf("\n");
-	printf(" %c | %c | %c	\n", boardPosition[0], boardPosition[1], boardPosition[2]);
+	printf(" %c | %c | %c	\n", boardPositions[0], boardPositions[1], boardPositions[2]);
 	printf("---|---|---\n");
-	printf(" %c | %c | %c	\n", boardPosition[3], boardPosition[4], boardPosition[5]);
+	printf(" %c | %c | %c	\n", boardPositions[3], boardPositions[4], boardPositions[5]);
 	printf("---|---|---\n");
-	printf(" %c | %c | %c	\n", boardPosition[6], boardPosition[7], boardPosition[8]);
+	printf(" %c | %c | %c	\n", boardPositions[6], boardPositions[7], boardPositions[8]);
 	printf("\n");
+}
+
+int getSymbol()
+{
+	int index;
+	printf("Enter No. of Position: \n");
+	scanf("%d", &index);
+	return index;
+}
+
+void updateBoard(int index, char boardPositions[])
+{
+	boardPositions[index] = 'X';
 }
