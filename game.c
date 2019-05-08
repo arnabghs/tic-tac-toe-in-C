@@ -12,6 +12,10 @@ int getPosition();
 void updateBoard(int, char[], char);
 void turnManager(char[], struct Player *, struct Player *);
 void getPlayerSymbol(struct Player *, struct Player *);
+void handleTurn(struct Player *, char[], int);
+void updateMoveRecords(struct Player *, int, int);
+
+// void printIntArray(int[], int);
 
 int main()
 {
@@ -23,7 +27,6 @@ int main()
 	player2Pointer = &player2;
 
 	turnManager(boardPositions, player1Pointer, player2Pointer);
-
 	return 0;
 }
 
@@ -65,15 +68,37 @@ void turnManager(char boardPositions[], struct Player *player1Pointer, struct Pl
 	displayBoard(boardPositions);
 	getPlayerSymbol(player1Pointer, player2Pointer);
 	int turnPlayed = 0;
+	int playerRecordIndex = 0;
 
 	while (turnPlayed < 9)
 	{
-		char currentSymbol = (turnPlayed % 2 == 0) ? player1Pointer->symbol : player2Pointer->symbol;
-		int index = getPosition();
-		updateBoard(index, boardPositions, currentSymbol);
-		displayBoard(boardPositions);
+		struct Player *playerDataPointer = (turnPlayed % 2 == 0) ? player1Pointer : player2Pointer;
+		handleTurn(playerDataPointer, boardPositions, playerRecordIndex);
+		if (turnPlayed % 2 == 1)
+		{
+			playerRecordIndex += 1;
+		};
 		turnPlayed++;
 	}
+	//
+	// printf("\nfirst array\n");
+	// printIntArray(player1Pointer->moves, 5);
+	// printf("\nsecond array\n");
+	// printIntArray(player2Pointer->moves, 4);
+	// //
+}
+
+void handleTurn(struct Player *playerDataPointer, char boardPositions[], int recordIndex)
+{
+	int index = getPosition();
+	updateBoard(index, boardPositions, playerDataPointer->symbol);
+	updateMoveRecords(playerDataPointer, index, recordIndex);
+	displayBoard(boardPositions);
+}
+
+void updateMoveRecords(struct Player *playerDataPointer, int squareIndex, int recordIndex)
+{
+	playerDataPointer->moves[recordIndex] = squareIndex;
 }
 
 void getPlayerSymbol(struct Player *player1Pointer, struct Player *player2Pointer)
@@ -82,3 +107,13 @@ void getPlayerSymbol(struct Player *player1Pointer, struct Player *player2Pointe
 	scanf("%c", &player1Pointer->symbol);
 	player2Pointer->symbol = (player1Pointer->symbol == 'X') ? 'O' : 'X';
 }
+
+//dev
+// void printIntArray(int ar[], int size)
+// {
+// 	for (int i = 0; i < size; i++)
+// 	{
+// 		printf("%d		", ar[i]);
+// 	}
+// }
+//
