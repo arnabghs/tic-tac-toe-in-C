@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 
 struct Player
 {
@@ -14,6 +16,11 @@ void turnManager(char[], struct Player *, struct Player *);
 void getPlayerSymbol(struct Player *, struct Player *);
 void handleTurn(struct Player *, char[], int);
 void updateMoveRecords(struct Player *, int, int);
+void checkWinner(struct Player *);
+bool hasWon(int[]);
+bool doesContainWinCombination(int *, int[]);
+bool containsAllSquares(int[], int[]);
+bool doesIncludeValue(int[], int);
 
 // void printIntArray(int[], int);
 
@@ -22,6 +29,11 @@ int main()
 	char boardPositions[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 
 	struct Player player1, player2;
+
+	//to clear the arrays of any int from 0-8
+	memset(player1.moves, -1, sizeof(player1.moves));
+	memset(player2.moves, -1, sizeof(player2.moves));
+
 	struct Player *player1Pointer, *player2Pointer;
 	player1Pointer = &player1;
 	player2Pointer = &player2;
@@ -53,7 +65,7 @@ void displayBoard(char boardPositions[])
 int getPosition()
 {
 	int index;
-	printf("Enter No. of Position: \n");
+	printf("\nEnter No. of Position: \n");
 	scanf("%d", &index);
 	return index;
 }
@@ -78,14 +90,69 @@ void turnManager(char boardPositions[], struct Player *player1Pointer, struct Pl
 		{
 			playerRecordIndex += 1;
 		};
+		checkWinner(playerDataPointer);
 		turnPlayed++;
 	}
+	printf("\nGame is Drawn.\n");
 	//
 	// printf("\nfirst array\n");
 	// printIntArray(player1Pointer->moves, 5);
 	// printf("\nsecond array\n");
 	// printIntArray(player2Pointer->moves, 4);
 	// //
+}
+
+void checkWinner(struct Player *playerData)
+{
+	if (hasWon(playerData->moves))
+	{
+		printf("Player with %c has won", playerData->symbol);
+		exit(0);
+	}
+}
+
+bool hasWon(int playedMoves[])
+{
+	int winningCombinations[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
+	return (doesContainWinCombination((int *)winningCombinations, playedMoves)); //&winningCombinations[0][0]
+}
+
+bool doesContainWinCombination(int *pComb, int moves[])
+{
+	int totalCombinations = 8;
+	for (int i = 0; i < totalCombinations; i++)
+	{
+		int winCombination[3] = {*(pComb + (i * 3) + 0), *(pComb + (i * 3) + 1), *(pComb + (i * 3) + 2)};
+		if (containsAllSquares(moves, winCombination))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool containsAllSquares(int moves[], int winCombination[])
+{
+	int lengthOfWinCombination = 3;
+	for (int i = 0; i < lengthOfWinCombination; i++)
+	{
+		if (!doesIncludeValue(moves, winCombination[i]))
+			return false;
+	}
+	return true;
+}
+
+bool doesIncludeValue(int array[], int value)
+{
+	int lengthOfMoves = 5;
+	for (int i = 0; i < lengthOfMoves; i++)
+	{
+		if (array[i] == value)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void handleTurn(struct Player *playerDataPointer, char boardPositions[], int recordIndex)
