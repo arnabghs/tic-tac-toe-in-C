@@ -14,13 +14,14 @@ int getPosition();
 void updateBoard(int, char[], char);
 void turnManager(char[], struct Player *, struct Player *);
 void getPlayerSymbol(struct Player *, struct Player *);
-void handleTurn(struct Player *, char[], int);
+int handleTurn(struct Player *, char[], int, int[], int);
 void updateMoveRecords(struct Player *, int, int);
 void checkWinner(struct Player *);
 bool hasWon(int[]);
 bool doesContainWinCombination(int *, int[]);
 bool containsAllSquares(int[], int[]);
-bool doesIncludeValue(int[], int);
+bool doesIncludeValue(int[], int, int);
+bool isPositionInvalid(int, int[]);
 
 // void printIntArray(int[], int);
 
@@ -81,17 +82,22 @@ void turnManager(char boardPositions[], struct Player *player1Pointer, struct Pl
 	getPlayerSymbol(player1Pointer, player2Pointer);
 	int turnPlayed = 0;
 	int playerRecordIndex = 0;
+	int occupiedPosition[9];
+	memset(occupiedPosition, -1, sizeof(occupiedPosition)); //to remove any garbage value 0-8
 
 	while (turnPlayed < 9)
 	{
 		struct Player *playerDataPointer = (turnPlayed % 2 == 0) ? player1Pointer : player2Pointer;
-		handleTurn(playerDataPointer, boardPositions, playerRecordIndex);
-		if (turnPlayed % 2 == 1)
+		int isMoveValid = handleTurn(playerDataPointer, boardPositions, playerRecordIndex, occupiedPosition, turnPlayed);
+		if (isMoveValid == 1)
 		{
-			playerRecordIndex += 1;
-		};
-		checkWinner(playerDataPointer);
-		turnPlayed++;
+			if (turnPlayed % 2 == 1)
+			{
+				playerRecordIndex += 1;
+			};
+			checkWinner(playerDataPointer);
+			turnPlayed++;
+		}
 	}
 	printf("\nGame is Drawn.\n");
 	//
@@ -134,18 +140,18 @@ bool doesContainWinCombination(int *pComb, int moves[])
 bool containsAllSquares(int moves[], int winCombination[])
 {
 	int lengthOfWinCombination = 3;
+	int movesLength = 5;
 	for (int i = 0; i < lengthOfWinCombination; i++)
 	{
-		if (!doesIncludeValue(moves, winCombination[i]))
+		if (!doesIncludeValue(moves, winCombination[i], movesLength))
 			return false;
 	}
 	return true;
 }
 
-bool doesIncludeValue(int array[], int value)
+bool doesIncludeValue(int array[], int value, int arrLength)
 {
-	int lengthOfMoves = 5;
-	for (int i = 0; i < lengthOfMoves; i++)
+	for (int i = 0; i < arrLength; i++)
 	{
 		if (array[i] == value)
 		{
@@ -155,12 +161,33 @@ bool doesIncludeValue(int array[], int value)
 	return false;
 }
 
-void handleTurn(struct Player *playerDataPointer, char boardPositions[], int recordIndex)
+int handleTurn(struct Player *playerDataPointer, char boardPositions[], int recordIndex, int occupiedPositions[], int playedMoveIndex)
 {
 	int index = getPosition();
+	if (isPositionInvalid(index, occupiedPositions))
+	{
+		printf("Invalid input, please enter a valid position.");
+		return 0;
+	}
 	updateBoard(index, boardPositions, playerDataPointer->symbol);
-	updateMoveRecords(playerDataPointer, index, recordIndex);
 	displayBoard(boardPositions);
+	updateMoveRecords(playerDataPointer, index, recordIndex);
+	occupiedPositions[playedMoveIndex] = index;
+	return 1;
+}
+
+bool isPositionInvalid(int positionIndex, int occupiedPosition[])
+{
+	int occupiedPositionLength = 9;
+	if (positionIndex < 0 || positionIndex > 8)
+	{
+		return true;
+	}
+	if (doesIncludeValue(occupiedPosition, positionIndex, occupiedPositionLength))
+	{
+		return true;
+	}
+	return false;
 }
 
 void updateMoveRecords(struct Player *playerDataPointer, int squareIndex, int recordIndex)
