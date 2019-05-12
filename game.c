@@ -45,7 +45,7 @@ int main()
 
 void displayBoard(char boardPositions[])
 {
-
+	system("clear");
 	printf("\n");
 	printf(" O | 1 | 2 \n");
 	printf("---|---|---\n");
@@ -83,7 +83,7 @@ void turnManager(char boardPositions[], struct Player *player1Pointer, struct Pl
 	int turnPlayed = 0;
 	int playerRecordIndex = 0;
 	int occupiedPosition[9];
-	memset(occupiedPosition, -1, sizeof(occupiedPosition)); //to remove any garbage value 0-8
+	memset(occupiedPosition, -1, sizeof(occupiedPosition)); //to remove any garbage value (might include 0-8)
 
 	while (turnPlayed < 9)
 	{
