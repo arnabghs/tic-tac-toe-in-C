@@ -197,9 +197,18 @@ void updateMoveRecords(struct Player *playerDataPointer, int squareIndex, int re
 
 void getPlayerSymbol(struct Player *player1Pointer, struct Player *player2Pointer)
 {
-	printf("player1 choose your symbol (X or O): \n");
-	scanf("%c", &player1Pointer->symbol);
-	player2Pointer->symbol = (player1Pointer->symbol == 'X') ? 'O' : 'X';
+	char inputSymbol;
+	printf("player1 choose your symbol (X or O): 	");
+	scanf(" %c", &inputSymbol);
+
+	if (inputSymbol == 'X' || inputSymbol == 'O')
+	{
+		player1Pointer->symbol = inputSymbol;
+		player2Pointer->symbol = (inputSymbol == 'X') ? 'O' : 'X';
+		return;
+	}
+	printf("\nEnter a valid symbol.\n");
+	getPlayerSymbol(player1Pointer, player2Pointer);
 }
 
 //dev
