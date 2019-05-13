@@ -7,13 +7,15 @@ struct Player
 {
 	char symbol;
 	int moves[5];
+	char name[20];
 };
 
 void displayBoard(char[]);
-void getPosition(int[]);
+void getPosition(int[], char[]);
 void updateBoard(int, char[], char);
 void turnManager(char[], struct Player *, struct Player *);
 void getPlayerSymbol(struct Player *, struct Player *);
+void getPlayerName(struct Player *, struct Player *);
 int handleTurn(struct Player *, char[], int, int[], int);
 void updateMoveRecords(struct Player *, int, int);
 void checkWinner(struct Player *);
@@ -22,8 +24,6 @@ bool doesContainWinCombination(int *, int[]);
 bool containsAllSquares(int[], int[]);
 bool doesIncludeValue(int[], int, int);
 bool isPositionInvalid(int, int[]);
-
-// void printIntArray(int[], int);
 
 int main()
 {
@@ -63,11 +63,11 @@ void displayBoard(char boardPositions[])
 	printf("\n");
 }
 
-void getPosition(int result[])
+void getPosition(int result[], char name[])
 {
 	int index;
 	int invalidTypeOfInput = 0;
-	printf("\nEnter No. of Position: \n");
+	printf("\n %s, please enter No. of Position: \n", name);
 
 	if (scanf("%d", &index) == 0)
 	{
@@ -86,6 +86,7 @@ void updateBoard(int index, char boardPositions[], char symbol)
 void turnManager(char boardPositions[], struct Player *player1Pointer, struct Player *player2Pointer)
 {
 	displayBoard(boardPositions);
+	getPlayerName(player1Pointer, player2Pointer);
 	getPlayerSymbol(player1Pointer, player2Pointer);
 	int turnPlayed = 0;
 	int playerRecordIndex = 0;
@@ -107,19 +108,13 @@ void turnManager(char boardPositions[], struct Player *player1Pointer, struct Pl
 		}
 	}
 	printf("\nGame is Drawn.\n");
-	//
-	// printf("\nfirst array\n");
-	// printIntArray(player1Pointer->moves, 5);
-	// printf("\nsecond array\n");
-	// printIntArray(player2Pointer->moves, 4);
-	// //
 }
 
 void checkWinner(struct Player *playerData)
 {
 	if (hasWon(playerData->moves))
 	{
-		printf("Player with %c has won", playerData->symbol);
+		printf("%s has won !", playerData->name);
 		exit(0);
 	}
 }
@@ -171,7 +166,7 @@ bool doesIncludeValue(int array[], int value, int arrLength)
 int handleTurn(struct Player *playerDataPointer, char boardPositions[], int recordIndex, int occupiedPositions[], int playedMoveIndex)
 {
 	int result[2];
-	getPosition(result);
+	getPosition(result, playerDataPointer->name);
 	int index = result[0];
 	int invalidTypeOfInput = result[1];
 	if (isPositionInvalid(index, occupiedPositions) || invalidTypeOfInput == 1)
@@ -208,25 +203,25 @@ void updateMoveRecords(struct Player *playerDataPointer, int squareIndex, int re
 void getPlayerSymbol(struct Player *player1Pointer, struct Player *player2Pointer)
 {
 	char inputSymbol;
-	printf("player1 choose your symbol (X or O): 	");
-	scanf(" %c", &inputSymbol);
+	printf("%s, choose your symbol (X or O): 	", player1Pointer->name);
+	scanf(" %c", &inputSymbol); // " %c" to remove whitespaces
 
 	if (inputSymbol == 'X' || inputSymbol == 'O')
 	{
 		player1Pointer->symbol = inputSymbol;
 		player2Pointer->symbol = (inputSymbol == 'X') ? 'O' : 'X';
+		printf("%s, your symbol is %c.", player2Pointer->name, player2Pointer->symbol);
 		return;
 	}
 	printf("\nEnter a valid symbol.\n");
 	getPlayerSymbol(player1Pointer, player2Pointer);
 }
 
-//dev
-// void printIntArray(int ar[], int size)
-// {
-// 	for (int i = 0; i < size; i++)
-// 	{
-// 		printf("%d		", ar[i]);
-// 	}
-// }
-//
+void getPlayerName(struct Player *player1Pointer, struct Player *player2Pointer)
+{
+	printf("First player, enter your name : ");
+	scanf("%s", player1Pointer->name);
+
+	printf("Second player, enter your name : ");
+	scanf("%s", player2Pointer->name);
+}
