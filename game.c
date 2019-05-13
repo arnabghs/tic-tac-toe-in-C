@@ -10,7 +10,7 @@ struct Player
 };
 
 void displayBoard(char[]);
-int getPosition();
+void getPosition(int[]);
 void updateBoard(int, char[], char);
 void turnManager(char[], struct Player *, struct Player *);
 void getPlayerSymbol(struct Player *, struct Player *);
@@ -63,12 +63,19 @@ void displayBoard(char boardPositions[])
 	printf("\n");
 }
 
-int getPosition()
+void getPosition(int result[])
 {
 	int index;
+	int invalidTypeOfInput = 0;
 	printf("\nEnter No. of Position: \n");
-	scanf("%d", &index);
-	return index;
+
+	if (scanf("%d", &index) == 0)
+	{
+		invalidTypeOfInput = 1;
+	}
+	fseek(stdin, 0, SEEK_END); //to flush the input buffer
+	result[0] = index;
+	result[1] = invalidTypeOfInput;
 }
 
 void updateBoard(int index, char boardPositions[], char symbol)
@@ -163,8 +170,11 @@ bool doesIncludeValue(int array[], int value, int arrLength)
 
 int handleTurn(struct Player *playerDataPointer, char boardPositions[], int recordIndex, int occupiedPositions[], int playedMoveIndex)
 {
-	int index = getPosition();
-	if (isPositionInvalid(index, occupiedPositions))
+	int result[2];
+	getPosition(result);
+	int index = result[0];
+	int invalidTypeOfInput = result[1];
+	if (isPositionInvalid(index, occupiedPositions) || invalidTypeOfInput == 1)
 	{
 		printf("Invalid input, please enter a valid position.");
 		return 0;
